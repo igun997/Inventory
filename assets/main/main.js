@@ -46,12 +46,31 @@
   function builder(input,button,id) {
     var inputboiler = [];
     for (var i = 0; i < input.length; i++) {
-      temp = [
-        '<div class="form-group">',
-        '<label>'+input[i].label+'</label>',
-        '<input class="form-control" type="'+input[i].type+'" value="'+input[i].value+'" name="'+input[i].name+'">',
-        '</div>'
-      ];
+      if (input[i].value == undefined) {
+        val = "";
+      }else {
+        val = input[i].value;
+      }
+      if (input[i].id == undefined) {
+        ids = "";
+      }else {
+        ids = input[i].id;
+      }
+      if (input[i].type == "select2") {
+        temp = [
+          '<div class="form-group">',
+          '<label>'+input[i].label+'</label>',
+          '<select class="form-control " id="'+ids+'" name="'+input[i].name+'"></select>',
+          '</div>'
+        ];
+      }else {
+        temp = [
+          '<div class="form-group">',
+          '<label>'+input[i].label+'</label>',
+          '<input class="form-control" type="'+input[i].type+'" id="'+id+'" value="'+val+'" name="'+input[i].name+'">',
+          '</div>'
+        ];
+      }
       inputboiler[i] = temp.join("");
     }
     indexinput = inputboiler.length;

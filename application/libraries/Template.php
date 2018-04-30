@@ -59,6 +59,7 @@ class Template {
         base_url("assets/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css"),
         base_url("assets/extra/swal.css"),
         base_url("assets/extra/datatables/datatables.min.css"),
+        base_url("assets/extra/select2/css/select2.min.css"),
         base_url("assets/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css")
       ];
       $js = [
@@ -71,6 +72,7 @@ class Template {
         base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"),
         base_url("assets/extra/swal.js"),
         base_url("assets/extra/datatables/datatables.min.js"),
+        base_url("assets/extra/select2/js/select2.full.js"),
         base_url("assets/extra/bootbox.min.js"),
         base_url("assets/adminlte/dist/js/adminlte.min.js")
       ];
