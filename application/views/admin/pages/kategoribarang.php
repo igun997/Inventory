@@ -4,7 +4,7 @@
     <div class="box box-danger">
       <div class="box-header with-border">
         <h1 class="box-title">{block_title}</h1>
-        <button type="button" class="btn btn-success pull-right">
+        <button type="button" id="add" class="btn btn-success pull-right">
           <i class="fa fa-plus"></i>
         </button>
       </div>
@@ -17,7 +17,7 @@
             <th>Aksi</th>
           </thead>
           <tbody>
-            
+
           </tbody>
         </table>
       </div>

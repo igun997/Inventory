@@ -84,5 +84,29 @@ class Api extends REST_Controller
        }
      }
    }
-
+   public function kategoribarangupdate_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $id = $dpost["id_kategori_barang"];
+     unset($dpost["id_kategori_barang"]);
+     $this->main->setTable("kategori_barang");
+     $up = $this->main->update($dpost,["id_kategori_barang"=>$id]);
+     if ($up) {
+       $a = ["status"=>1];
+     }else {
+       $a = ["status"=>0];
+     }
+     $this->response($a);
+   }
+   public function kategoribarangsave_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("kategori_barang");
+     $ins = $this->main->insert($dpost);
+     if ($ins) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>2]);
+     }
+   }
 }
