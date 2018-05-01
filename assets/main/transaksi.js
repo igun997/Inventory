@@ -559,10 +559,46 @@ $(document).ready(function() {
               }
             });
           }else {
-            swal("Error","Data Tidak Ditemukan","error");
-          }else {
             bootbox.hideAll();
             swal("Sukses","Transaksi Sudah Selesai","info");
+          }
+        },1000);
+      });
+    });
+    $("#table_main").on('click', '.detail', function(event) {
+      idnow = $(this).data("id");
+      var dialog = bootbox.dialog({
+        title: 'Prepare Menu ',
+        message: '<p><center><i class="fa fa-spin fa-spinner"></i> Loading...</center></p>'
+      });
+      dialog.init(function() {
+        setTimeout(function() {
+          gdata = get(base_url+"api/transaksiget/"+idnow+"/1");
+          if (gdata.status == 1) {
+            t1 = table(["ID","Nama Barang","Total","Subtotal"],[],"t1");
+            t2 = table(["ID","Nama Barang","Total","Subtotal"],[],"t2");
+            t3 = table(["ID","Bayar","Tanggal Bayar"],[],"t3");
+            t4 = [
+              '<p><b>No Faktur : </b>'+gdata.data.nofaktur+'</p>',
+              '<p><b>Nama Pembeli : </b>'+gdata.data.nama_pembeli+'</p>',
+              '<p><b>Alamat : </b>'+gdata.data.alamat+'</p>',
+              '<p><b>Status Transaksi : </b>'+(gdata.data.status_transaksi).toUpperCase()+'</p>',
+              '<p><b>Total Bayar : </b>'+gdata.data.total_bayar+'</p>',
+              '<p><b>Cashbon : </b>'+gdata.data.cashbon+'</p>'
+            ]
+            dialog.find(".modal-title").html("Detail Transaksi");
+            dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'><h4>Data Transaksi</h4><hr>"+t4.join("")+"</div><div class='col-md-12'><h4>Barang Keluar</h4><hr>"+t1+"</div><div class='col-md-12'><h4>Barang Keluar [PREORDER]</h4><hr>"+t2+"</div><div class='col-md-12'><h4>Cashbon Tracker</h4><hr>"+t3+"</div></div>");
+            tt1 = dialog.find("#t1").DataTable({
+              ajax: base_url + "api/barangkeluarget/"+idnow
+            });
+            tt2 = dialog.find("#t2").DataTable({
+              ajax: base_url + "api/barangkeluarpreorderget/"+idnow
+            });
+            tt3 = dialog.find("#t3").DataTable({
+              ajax: base_url + "api/barangkeluarcashbonget/"+idnow
+            });
+          }else {
+            swal("Error","Data Tidak Ditemukan","error");
           }
         },1000);
       });

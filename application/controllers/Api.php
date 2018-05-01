@@ -329,6 +329,17 @@ class Api extends REST_Controller
        $this->response(["status"=>0]);
      }
    }
+   public function barangkeluarcashbonget_get($id='')
+   {
+     $this->main->setTable("transaksi_barang_keluar_cashbon");
+     $i = $this->main->get(["id_transaksi_barang_keluar"=>$id]);
+     $d = [];
+     $d["data"] = [];
+     foreach ($i->result() as $key => $value) {
+       $d["data"][] = [$value->id_transaksi_barang_keluar,$value->bayar,date("d-m-Y H:i:s",strtotime($value->tgl_bayar))];
+     }
+     $this->response($d);
+   }
    public function barangkeluarcashbonsave_post()
    {
      $dpost = $this->input->post(null,true);
@@ -369,7 +380,7 @@ class Api extends REST_Controller
            }else {
              $trx_status = "<span class='label label-danger'>Tidak Ada Barang</span>";
            }
-           $b["data"][] = [$value->id_transaksi_barang_keluar,$value->nofaktur,$value->nama_pembeli,$value->alamat,$trx_status,$value->tgl_transaksi_keluar,"<button class='btn btn-success detail' data-id='".$value->id_transaksi_barang_keluar."' type='button'><li class='fa fa-search'></li></button> <button class='btn btn-primary cetak' data-id='".$value->id_transaksi_barang_keluar."' type='button'><li class='fa fa-print'></li></button> <button class='btn btn-warning edit' data-id='".$value->id_transaksi_barang_keluar."' type='button'><li class='fa fa-edit'></li></button>"];
+           $b["data"][] = [$value->id_transaksi_barang_keluar,$value->nofaktur,$value->nama_pembeli,$value->alamat,$trx_status,$value->tgl_transaksi_keluar,"<button class='btn btn-success detail' data-id='".$value->id_transaksi_barang_keluar."' type='button'><li class='fa fa-search'></li></button> <a class='btn btn-primary' href='".base_url("api/print/".$value->id_transaksi_barang_keluar)."' target='_blank'><li class='fa fa-print'></li></a> <button class='btn btn-warning edit' data-id='".$value->id_transaksi_barang_keluar."' type='button'><li class='fa fa-edit'></li></button>"];
          }
        }else {
          $b = ["status"=>1,"data"=>$res];
@@ -423,5 +434,283 @@ class Api extends REST_Controller
        $this->response(["status"=>0]);
      }
    }
-
+   public function print_get($id="")
+   {
+     $this->load->model("proses/m_barangkeluar");
+     $this->load->library("pdfgenerator");
+     $this->main->setTable("transaksi_barang_keluar");
+     $d = $this->main->get(["id_transaksi_barang_keluar"=>$id]);
+     $c = $this->m_barangkeluar->getbarangkeluar($id);
+     $b = $this->m_barangkeluar->getbarangkeluarpreorder($id);
+     $d = $d->row();
+     if ($d->status_transaksi == "lunas") {
+       $totalall = 0;
+       $itembuild = [];
+       $itembuildpre = [];
+       if ($c->num_rows() > 0) {
+         $totalbk = 0;
+         $itemset = [];
+         foreach ($c->result() as $key => $value) {
+           $temp = [
+             '<tr>',
+             '<td>'.$value->nama_barang.'</td>',
+             '<td>'.$value->total_keluar.'</td>',
+             '<td>Rp. '.number_format($value->total_keluar*$value->harga_jual).'</td>',
+             '</tr>'
+           ];
+           $totalbk = $totalbk + ($value->total_keluar*$value->harga_jual);
+           $itemset[] = implode("",$temp);
+         }
+         $itembuild = [
+           '<center><h4>Barang Keluar</h4></center>',
+           '<style>',
+           'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+             '}',
+             'th, td {',
+               'padding: 5px;',
+               'text-align: left;',
+               '}',
+               '</style>',
+               '<table style="width:100%">',
+               '<tr>',
+               '<th>Nama Barang</th>',
+               '<th>Total</th>',
+               '<th>Subtotal</th>',
+               '</tr>',
+               implode("",$itemset),
+               '<tr>',
+               '<th colspan="2">Total</th>',
+               '<th>Rp. '.number_format($totalbk).'</th>',
+               '</tr>',
+               '</table>'
+         ];
+         $totalall = $totalall + $totalbk;
+       }
+       if ($b->num_rows() > 0) {
+         $totalbkpre = 0;
+         $itemsetpre = [];
+         foreach ($b->result() as $key => $value) {
+           $temp = [
+             '<tr>',
+             '<td>'.$value->nama_barang.'</td>',
+             '<td>'.$value->total_keluar.'</td>',
+             '<td>Rp. '.number_format($value->total_keluar*$value->harga_jual).'</td>',
+             '</tr>'
+           ];
+           $totalbkpre = $totalbkpre + ($value->total_keluar*$value->harga_jual);
+           $itemsetpre[] = implode("",$temp);
+         }
+         $itembuildpre = [
+           '<center><h4>Barang Keluar [PREORDER]</h4></center>',
+           '<style>',
+           'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+             '}',
+             'th, td {',
+               'padding: 5px;',
+               'text-align: left;',
+               '}',
+               '</style>',
+               '<table style="width:100%">',
+               '<tr>',
+               '<th>Nama Barang</th>',
+               '<th>Total</th>',
+               '<th>Subtotal</th>',
+               '</tr>',
+               implode("",$itemsetpre),
+               '<tr>',
+               '<th colspan="2">Total</th>',
+               '<th>Rp. '.number_format($totalbkpre).'</th>',
+               '</tr>',
+               '</table>'
+         ];
+         $totalall = $totalall + $totalbkpre;
+       }
+       $build = [
+         '<center><h1>Faktur Pembelian</h1></center>',
+         '<center><h3>TB Kagum Lestari</h3></center>',
+         '<style>',
+         'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+         '}',
+         'th, td {',
+             'padding: 5px;',
+             'text-align: left;',
+         '}',
+         '</style>',
+         '<table style="width:100%">',
+           '<tr>',
+             '<th width="30%">Nomor Faktur</th>',
+             '<td>'.$d->nofaktur.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Nama Pembeli</th>',
+             '<td>'.$d->nama_pembeli.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Alamat</th>',
+             '<td>'.$d->alamat.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Status Faktur</th>',
+             '<td>'.strtoupper($d->status_transaksi).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Tanggal Transaksi</th>',
+             '<td>'.date("d-m-Y H:i:s",strtotime($d->tgl_transaksi_keluar)).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Total Pembayaran</th>',
+             '<td>Rp. '.number_format($totalall).'</td>',
+           '</tr>',
+         '</table>',
+         implode("",$itembuild),
+         implode("",$itembuildpre),
+       ];
+       $this->pdfgenerator->generate(implode("",$build),"anu");
+     }elseif ($d->status_transaksi == "cashbon") {
+       $totalall = 0;
+       $itembuild = [];
+       $itembuildpre = [];
+       if ($c->num_rows() > 0) {
+         $totalbk = 0;
+         $itemset = [];
+         foreach ($c->result() as $key => $value) {
+           $temp = [
+             '<tr>',
+             '<td>'.$value->nama_barang.'</td>',
+             '<td>'.$value->total_keluar.'</td>',
+             '<td>Rp. '.number_format($value->total_keluar*$value->harga_jual).'</td>',
+             '</tr>'
+           ];
+           $totalbk = $totalbk + ($value->total_keluar*$value->harga_jual);
+           $itemset[] = implode("",$temp);
+         }
+         $itembuild = [
+           '<center><h4>Barang Keluar</h4></center>',
+           '<style>',
+           'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+             '}',
+             'th, td {',
+               'padding: 5px;',
+               'text-align: left;',
+               '}',
+               '</style>',
+               '<table style="width:100%">',
+               '<tr>',
+               '<th>Nama Barang</th>',
+               '<th>Total</th>',
+               '<th>Subtotal</th>',
+               '</tr>',
+               implode("",$itemset),
+               '<tr>',
+               '<th colspan="2">Total</th>',
+               '<th>Rp. '.number_format($totalbk).'</th>',
+               '</tr>',
+               '</table>'
+         ];
+         $totalall = $totalall + $totalbk;
+       }
+       if ($b->num_rows() > 0) {
+         $totalbkpre = 0;
+         $itemsetpre = [];
+         foreach ($b->result() as $key => $value) {
+           $temp = [
+             '<tr>',
+             '<td>'.$value->nama_barang.'</td>',
+             '<td>'.$value->total_keluar.'</td>',
+             '<td>Rp. '.number_format($value->total_keluar*$value->harga_jual).'</td>',
+             '</tr>'
+           ];
+           $totalbkpre = $totalbkpre + ($value->total_keluar*$value->harga_jual);
+           $itemsetpre[] = implode("",$temp);
+         }
+         $itembuildpre = [
+           '<center><h4>Barang Keluar [PREORDER]</h4></center>',
+           '<style>',
+           'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+             '}',
+             'th, td {',
+               'padding: 5px;',
+               'text-align: left;',
+               '}',
+               '</style>',
+               '<table style="width:100%">',
+               '<tr>',
+               '<th>Nama Barang</th>',
+               '<th>Total</th>',
+               '<th>Subtotal</th>',
+               '</tr>',
+               implode("",$itemsetpre),
+               '<tr>',
+               '<th colspan="2">Total</th>',
+               '<th>Rp. '.number_format($totalbkpre).'</th>',
+               '</tr>',
+               '</table>'
+         ];
+         $totalall = $totalall + $totalbkpre;
+       }
+       $build = [
+         '<center><h1>Faktur Pembelian</h1></center>',
+         '<center><h3>TB Kagum Lestari</h3></center>',
+         '<style>',
+         'table, th, td {',
+             'border: 1px solid black;',
+             'border-collapse: collapse;',
+         '}',
+         'th, td {',
+             'padding: 5px;',
+             'text-align: left;',
+         '}',
+         '</style>',
+         '<table style="width:100%">',
+           '<tr>',
+             '<th width="30%">Nomor Faktur</th>',
+             '<td>'.$d->nofaktur.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Nama Pembeli</th>',
+             '<td>'.$d->nama_pembeli.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Alamat</th>',
+             '<td>'.$d->alamat.'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Status Faktur</th>',
+             '<td>'.strtoupper($d->status_transaksi).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Tanggal Transaksi</th>',
+             '<td>'.date("d-m-Y H:i:s",strtotime($d->tgl_transaksi_keluar)).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Total Pembayaran</th>',
+             '<td>Rp. '.number_format($totalall).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Total Dibayarkan</th>',
+             '<td>Rp. '.number_format($d->total_bayar).'</td>',
+           '</tr>',
+           '<tr>',
+             '<th width="30%">Sisa Pembayaran</th>',
+             '<td>Rp. '.number_format($d->cashbon).'</td>',
+           '</tr>',
+         '</table>',
+         implode("",$itembuild),
+         implode("",$itembuildpre),
+       ];
+       $this->pdfgenerator->generate(implode("",$build),"anu");
+     }else {
+       echo "Transaksi Yang Belum Selesai Tidak Mempunyai Laporan";
+     }
+   }
 }
