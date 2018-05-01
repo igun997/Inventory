@@ -560,6 +560,9 @@ $(document).ready(function() {
             });
           }else {
             swal("Error","Data Tidak Ditemukan","error");
+          }else {
+            bootbox.hideAll();
+            swal("Sukses","Transaksi Sudah Selesai","info");
           }
         },1000);
       });
@@ -1088,6 +1091,9 @@ $(document).ready(function() {
           });
         },500);
       });
+    });
+    $("#table_main").on('click', '.detail', function(event) {
+
     });
   })
   .fail(function( jqxhr, settings, exception ) {
