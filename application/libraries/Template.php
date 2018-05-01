@@ -72,6 +72,7 @@ class Template {
         base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"),
         base_url("assets/extra/swal.js"),
         base_url("assets/extra/datatables/datatables.min.js"),
+        base_url("assets/extra/datatables/sum.js"),
         base_url("assets/extra/select2/js/select2.full.js"),
         base_url("assets/extra/bootbox.min.js"),
         base_url("assets/adminlte/dist/js/adminlte.min.js")

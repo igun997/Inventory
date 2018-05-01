@@ -102,6 +102,13 @@
         </a>
       </li>
       <li>
+        <a href="<?= $base_admin("laporan") ?>">
+          <i class="fa fa-list"></i> <span>Laporan</span>
+          <span class="pull-right-container">
+          </span>
+        </a>
+      </li>
+      <li>
         <a href="<?= $base_admin("logout") ?>">
           <i class="fa fa-power-off"></i> <span>LOGOUT</span>
           <span class="pull-right-container">

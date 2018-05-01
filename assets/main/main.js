@@ -43,6 +43,28 @@
   function test() {
     console.log("Just Test");
   }
+  function table(columns=[],row=[],id) {
+    thead = [];
+    tbody = [];
+    for (var i = 0; i < columns.length; i++) {
+      thead[i] = "<th>"+columns[i]+"</th>";
+    }
+    for (var i = 0; i < row.length; i++) {
+      tbody[i] = "<th>"+row[i]+"</th>";
+    }
+    cookingtable = [
+      '<table class="table" id="'+id+'">',
+      '<thead>',
+      thead.join(""),
+      '</thead>',
+      '<tbody>',
+      tbody.join(""),
+      '</tbody>',
+      '</table>'
+    ];
+    return cookingtable.join("");
+
+  }
   function builder(input,button,id) {
     var inputboiler = [];
     for (var i = 0; i < input.length; i++) {
@@ -56,18 +78,36 @@
       }else {
         ids = input[i].id;
       }
+      if (input[i].step == undefined) {
+        steps = "";
+      }else {
+        steps = "step='"+input[i].step+"'";
+      }
       if (input[i].type == "select2") {
         temp = [
           '<div class="form-group">',
           '<label>'+input[i].label+'</label>',
-          '<select class="form-control " id="'+ids+'" name="'+input[i].name+'"></select>',
+          '<select class="form-control " id="'+ids+'" name="'+input[i].name+'" '+steps+'></select>',
+          '</div>'
+        ];
+      }else if (input[i].type == "hidden") {
+        temp = [
+          '<div class="form-group">',
+          '<input type="text" hidden id="'+ids+'" value="'+val+'" name="'+input[i].name+'">',
+          '</div>'
+        ];
+      }else if (input[i].type == "disabled") {
+        temp = [
+          '<div class="form-group">',
+          '<label>'+input[i].label+'</label>',
+          '<input type="text" class="form-control" disabled id="'+ids+'" value="'+val+'">',
           '</div>'
         ];
       }else {
         temp = [
           '<div class="form-group">',
           '<label>'+input[i].label+'</label>',
-          '<input class="form-control" type="'+input[i].type+'" id="'+id+'" value="'+val+'" name="'+input[i].name+'">',
+          '<input class="form-control" type="'+input[i].type+'" id="'+ids+'" value="'+val+'" name="'+input[i].name+'" '+steps+'>',
           '</div>'
         ];
       }
