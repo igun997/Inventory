@@ -64,7 +64,11 @@ class Main extends CI_Model{
 	 */
   public function delete($data=[])
   {
-     $this->db->delete($this->table,$data);
+    if (count($data) > 0) {
+      $this->db->delete($this->table,$data);
+    }else {
+      $this->db->empty_table($this->table);
+    }
      return $this->db->affected_rows() > 0;
   }
   /**

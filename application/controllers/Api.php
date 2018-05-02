@@ -909,4 +909,64 @@ class Api extends REST_Controller
        }
      }
    }
+
+   public function akuntanupdate_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $id = $dpost["id_akuntan"];
+     unset($dpost["id_akuntan"]);
+     $this->main->setTable("akuntan");
+     $up = $this->main->update($dpost,["id_akuntan"=>$id]);
+     if ($up) {
+       $a = ["status"=>1];
+     }else {
+       $a = ["status"=>0];
+     }
+     $this->response($a);
+   }
+   public function deleteakuntan_get()
+   {
+     $this->main->setTable("akuntan");
+     $del = $this->main->delete();
+     if ($del) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>0]);
+     }
+   }
+   public function akuntanget_get($id='',$in = 0)
+   {
+     $this->main->setTable("akuntan");
+     if ($id == '' || $id == -1) {
+       $data = $this->main->get();
+       $data = $data->result();
+       if ($in == 0) {
+         $build = [];
+         $build["data"] = [];
+         foreach ($data as $key => $value) {
+           if ($value->tipe != "pemasukan" && $value->id_transaksi_barang_masuk != null) {
+             $idtrx = $value->id_transaksi_barang_masuk." - Stok Opname";
+           }else if($value->tipe != "pengeluaran" && $value->id_transaksi_barang_keluar != null) {
+             $idtrx = $value->id_transaksi_barang_keluar." - Pembelian";
+           }else {
+             $idtrx = "-";
+           }
+
+           $build["data"][] = [$value->id_akuntan,"<span class='label label-primary'>".ucfirst($value->tipe)."</span>",$idtrx,(number_format($value->total)),$value->alasan,$value->tgl_transaksi];
+         }
+         $this->response($build);
+       }else {
+         $this->response(["status"=>1,"data"=>$data]);
+       }
+     }else {
+       $data = $this->main->get(["id_akuntan"=>$id]);
+       $data = $data->result();
+       if (count($data) > 0) {
+         $data = $data[0];
+         $this->response(["status"=>1,"data"=>$data]);
+       }else {
+         $this->response(["status"=>0]);
+       }
+     }
+   }
 }
