@@ -65,7 +65,7 @@
     return cookingtable.join("");
 
   }
-  function builder(input,button,id) {
+  function builder(input,button,id,button_del=true) {
     var inputboiler = [];
     for (var i = 0; i < input.length; i++) {
       if (input[i].value == undefined) {
@@ -119,7 +119,17 @@
       '<button class="btn btn-'+button.class+'" type="'+button.type+'">'+button.name+'</button>',
       '</div>'
     ];
+    buttondel = [];
+    if (button_del != true) {
+      buttondel = [
+        '<div class="form-group">',
+        '<button class="btn btn-'+button_del.class+'" id="'+button_del.id+'" data-id="'+button_del.data+'" type="'+button_del.type+'">'+button_del.name+'</button>',
+        '</div>'
+      ]
+    }
     inputboiler[indexinput] = buttontemp.join("");
+    indexinput = inputboiler.length;
+    inputboiler[indexinput] = buttondel.join("");
     cookinginput = inputboiler.join("");
     cookingform = [
       '<form method="post" onsubmit="return false" id="'+id+'">',

@@ -411,7 +411,6 @@ class Api extends REST_Controller
      }
      $this->response($a);
    }
-
    public function transaksisave_post()
    {
      $dpost = $this->input->post(null,true);
@@ -711,6 +710,203 @@ class Api extends REST_Controller
        $this->pdfgenerator->generate(implode("",$build),"anu");
      }else {
        echo "Transaksi Yang Belum Selesai Tidak Mempunyai Laporan";
+     }
+   }
+   public function akuntanheapcek_get($nilai=0)
+   {
+     $this->main->setTable("akuntan");
+     $f = $this->main->get(["tipe"=>"pemasukan"]);
+     $s = 0;
+     foreach ($f->result() as $key => $value) {
+       $s = $s + $value->total;
+     }
+     if ($nilai <= $s) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>0]);
+     }
+   }
+   public function stokopnameget_get($id='',$in = 0)
+   {
+     $this->load->model("proses/m_stokopname");
+     if ($in == 0) {
+       if ($id == "") {
+         $d = $this->m_stokopname->getopname();
+       }else {
+         $d = $this->m_stokopname->getopname($id);
+       }
+       $b = [];
+       $b["data"] = [];
+       foreach ($d->result() as $key => $value) {
+         $diterima = 0;
+         $d = function($id){
+           $this->main->setTable("transaksi_barang_masuk_terima");
+           $a = $this->main->get(["id_transaksi_barang_masuk"=>$id]);
+           $y = 0;
+           foreach ($a->result() as $key => $value) {
+             $y = $y + $value->total;
+           }
+           return $y;
+         };
+         $diterima = $d($value->id_transaksi_barang_masuk);
+         $b["data"][] = [$value->id_transaksi_barang_masuk,$value->nama_sales,$value->nama_barang,"<span class='label label-primary'>".ucfirst($value->status_transaksi)."</span>","<span class='label label-primary'>".ucfirst($value->status_penerimaan)."</span>",$value->total_bayar,$value->hutang,$value->total_masuk,$diterima,$value->tgl_transaksi_masuk];
+       }
+       $this->response($b);
+     }else {
+       if ($id == "") {
+         $d = $this->m_stokopname->getopname();
+       }else {
+         $d = $this->m_stokopname->getopname($id);
+       }
+       if ($d->num_rows() > 0) {
+         $this->response(["status"=>1,"data"=>$d->result()]);
+       }else {
+         $this->response(["status"=>0]);
+       }
+     }
+   }
+   public function stokopnameterimabarangsave_post($value='')
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("transaksi_barang_masuk_terima");
+     $ins = $this->main->insert($dpost);
+     if ($ins) {
+        $this->response(["status"=>1]);
+     }else {
+        $this->response(["status"=>0]);
+     }
+   }
+   public function stokopnamehutangheap_get($id='')
+   {
+     $this->main->setTable("transaksi_barang_masuk_hutang");
+     $a = $this->main->get(["id_transaksi_barang_masuk"=>$id]);
+     $y = 0;
+     foreach ($a->result() as $key => $value) {
+       $y = $y + $value->bayar;
+     }
+     $this->response(["bayar"=>$y]);
+   }
+   public function stokopnameterimabarangheap_get($id='')
+   {
+     $this->main->setTable("transaksi_barang_masuk_terima");
+     $a = $this->main->get(["id_transaksi_barang_masuk"=>$id]);
+     $y = 0;
+     foreach ($a->result() as $key => $value) {
+       $y = $y + $value->bayar;
+     }
+     $this->response(["terima"=>$y]);
+   }
+   public function stokopnamehutangsave_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("transaksi_barang_masuk_hutang");
+     $ins = $this->main->insert($dpost);
+     if ($ins) {
+        $this->response(["status"=>1]);
+     }else {
+        $this->response(["status"=>0]);
+     }
+   }
+   public function cekstokopnameget_get()
+   {
+     $this->main->setTable("barang");
+     $d = $this->main->get("barang.stok <= barang.stok_minimum");
+     if ($d->num_rows() > 0) {
+       $da = [];
+       foreach ($d->result() as $key => $value) {
+         $da["data"][] = [$value->id_barang,$value->nama_barang,$value->harga_modal,$value->stok,$value->stok_minimum];
+       }
+       $this->response($da);
+     }else {
+       $this->response(["data"=>[]]);
+     }
+   }
+   public function stokopnamesave_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("transaksi_barang_masuk");
+     $ins = $this->main->insert($dpost);
+     if ($ins) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>0]);
+     }
+   }
+   public function stokopnameupdate_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $id = $dpost["id_transaksi_barang_masuk"];
+     unset($dpost["id_transaksi_barang_masuk"]);
+     $this->main->setTable("transaksi_barang_masuk");
+     $up = $this->main->update($dpost,["id_transaksi_barang_masuk"=>$id]);
+     if ($up) {
+       $a = ["status"=>1];
+     }else {
+       $a = ["status"=>0];
+     }
+     $this->response($a);
+   }
+   public function salessave_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("sales");
+     $ins = $this->main->insert($dpost);
+     if ($ins) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>0]);
+     }
+   }
+   public function salesupdate_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $id = $dpost["id_sales"];
+     unset($dpost["id_sales"]);
+     $this->main->setTable("sales");
+     $up = $this->main->update($dpost,["id_sales"=>$id]);
+     if ($up) {
+       $a = ["status"=>1];
+     }else {
+       $a = ["status"=>0];
+     }
+     $this->response($a);
+   }
+   public function salesdelete_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->main->setTable("sales");
+     $del = $this->main->delete($dpost);
+     if ($del) {
+       $this->response(["status"=>1]);
+     }else {
+       $this->response(["status"=>0]);
+     }
+   }
+   public function salesget_get($id='',$in = 0)
+   {
+     $this->main->setTable("sales");
+     if ($id == '' || $id == -1) {
+       $data = $this->main->get();
+       $data = $data->result();
+       if ($in == 0) {
+         $build = [];
+         $build["data"] = [];
+         foreach ($data as $key => $value) {
+           $build["data"][] = [$value->id_sales,$value->nama_sales,$value->nama_perusahaan,$value->alamat];
+         }
+         $this->response($build);
+       }else {
+         $this->response(["status"=>1,"data"=>$data]);
+       }
+     }else {
+       $data = $this->main->get(["id_sales"=>$id]);
+       $data = $data->result();
+       if (count($data) > 0) {
+         $data = $data[0];
+         $this->response(["status"=>1,"data"=>$data]);
+       }else {
+         $this->response(["status"=>0]);
+       }
      }
    }
 }
