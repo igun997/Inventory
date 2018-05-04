@@ -65,7 +65,7 @@
     return cookingtable.join("");
 
   }
-  function builder(input,button,id,button_del=true) {
+  function builder(input,button,id,button_del=true,onsubmit=true,o = "") {
     var inputboiler = [];
     for (var i = 0; i < input.length; i++) {
       if (input[i].value == undefined) {
@@ -131,8 +131,15 @@
     indexinput = inputboiler.length;
     inputboiler[indexinput] = buttondel.join("");
     cookinginput = inputboiler.join("");
+    if (onsubmit) {
+      action = "";
+      ons = 'onsubmit="return false"';
+    }else {
+      action = "";
+      ons = "action='"+o+"'";
+    }
     cookingform = [
-      '<form method="post" onsubmit="return false" id="'+id+'">',
+      '<form method="post" '+action+' '+ons+' id="'+id+'">',
       cookinginput,
       '</form>'
     ];

@@ -969,4 +969,280 @@ class Api extends REST_Controller
        }
      }
    }
+   public function laporankaskeluar_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->load->model("proses/m_laporan");
+     $d = $this->m_laporan->getlaporankaskeluar($dpost["start"],$dpost["end"]);
+     $totalpemasukan = 0;
+     $data = [];
+     foreach ($d as $key => $value) {
+       $totalpemasukan = $totalpemasukan +  $value->total;
+       $data[] = (object) ["nofaktur"=>$value->nofaktur,"total"=>$value->total,"alasan"=>$value->alasan,"tgl_transaksi"=>$value->tgl_transaksi];
+     }
+     $build = [];
+     $build["data"] = $data;
+     $build["total_pemasukan"] = $totalpemasukan;
+     $itemset = [];
+     foreach ($build["data"] as $key => $value) {
+       $tem = [
+         "<tr>",
+         "<td>".$value->nofaktur."</td>",
+         "<td>Rp.".number_format($value->total)."</td>",
+         "<td>".$value->alasan."</td>",
+         "<td>".$value->tgl_transaksi."</td>",
+         "</tr>"
+       ];
+       $itemset[] = implode("",$tem);
+     }
+     $itembuild = [
+       '<center><h4>Laporan Akuntan Pengeluaran</h4></center>',
+       '<style>',
+       'table, th, td {',
+       'border: 1px solid black;',
+       'border-collapse: collapse;',
+       '}',
+       'th, td {',
+       'padding: 5px;',
+       'text-align: left;',
+       '}',
+       '</style>',
+       '<table style="width:100%">',
+       '<tr>',
+       '<th>No Faktur</th>',
+       '<th>Total</th>',
+       '<th>Alasan</th>',
+       '<th>Tanggal Transaksi</th>',
+       '</tr>',
+       implode("",$itemset),
+       '<tr>',
+       '<th colspan="2">Total Pengeluaran</th>',
+       '<th colspan="3">Rp. '.number_format($build["total_pemasukan"]).'</th>',
+       '</tr>',
+       '</table>'
+     ];
+     $template = implode("",$itembuild);
+     $this->load->library("pdfgenerator");
+     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
+   }
+   public function laporankasmasuk_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->load->model("proses/m_laporan");
+     $d = $this->m_laporan->getlaporankasmasuk($dpost["start"],$dpost["end"]);
+     $totalpemasukan = 0;
+     $data = [];
+     foreach ($d as $key => $value) {
+       $totalpemasukan = $totalpemasukan +  $value->total;
+       $data[] = (object) ["nofaktur"=>$value->nofaktur,"total"=>$value->total,"alasan"=>$value->alasan,"tgl_transaksi"=>$value->tgl_transaksi];
+     }
+     $build = [];
+     $build["data"] = $data;
+     $build["total_pemasukan"] = $totalpemasukan;
+     $itemset = [];
+     foreach ($build["data"] as $key => $value) {
+       $tem = [
+         "<tr>",
+         "<td>".$value->nofaktur."</td>",
+         "<td>Rp.".number_format($value->total)."</td>",
+         "<td>".$value->alasan."</td>",
+         "<td>".$value->tgl_transaksi."</td>",
+         "</tr>"
+       ];
+       $itemset[] = implode("",$tem);
+     }
+     $itembuild = [
+       '<center><h4>Laporan Akuntan Pemasukan</h4></center>',
+       '<style>',
+       'table, th, td {',
+       'border: 1px solid black;',
+       'border-collapse: collapse;',
+       '}',
+       'th, td {',
+       'padding: 5px;',
+       'text-align: left;',
+       '}',
+       '</style>',
+       '<table style="width:100%">',
+       '<tr>',
+       '<th>No Faktur</th>',
+       '<th>Total</th>',
+       '<th>Alasan</th>',
+       '<th>Tanggal Transaksi</th>',
+       '</tr>',
+       implode("",$itemset),
+       '<tr>',
+       '<th colspan="2">Total Pengeluaran</th>',
+       '<th colspan="3">Rp. '.number_format($build["total_pemasukan"]).'</th>',
+       '</tr>',
+       '</table>'
+     ];
+     $template = implode("",$itembuild);
+     $this->load->library("pdfgenerator");
+     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
+     // $this->response($build);
+   }
+   public function laporanopname_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->load->model("proses/m_laporan");
+     $d = $this->m_laporan->getlaporanstokopname($dpost["start"],$dpost["end"]);
+     $itemset = [];
+     foreach ($d["data"] as $key => &$value) {
+       $list = [];
+       foreach ($value->item_hutang as $k => $v) {
+         $list[] = "<p>Pembayaran = ".$v->bayar."<br>TGL = ".$v->tgl_bayar."</p><hr>";
+       }
+       $value->diterima = 0;
+       foreach ($value->item_terima as $k => $v) {
+         $value->diterima = $value->diterima + $v->total;
+         $list[] = "<p>Terima = ".$v->total."<br>TGL = ".$v->tgl_terima."</p><hr>";
+       }
+
+       $ue = [
+         "<tr>",
+         "<td>".$value->id_transaksi_barang_masuk."</td>",
+         "<td>".$value->nama_barang."</td>",
+         "<td>".$value->nama_sales."</td>",
+         "<td>".$value->total_masuk."</td>",
+         "<td>".$value->diterima."</td>",
+         "<td>".$value->total_bayar."</td>",
+         "<td>".$value->hutang."</td>",
+         "<td>".ucfirst($value->status_transaksi)."</td>",
+         "<td>".implode("",$list)."</td>",
+         "<td>".$value->tgl_transaksi_masuk."</td>",
+         "</tr>",
+       ];
+       $itemset[] = implode("",$ue);
+     }
+     $itembuild = [
+       '<center><h4>Laporan Stok Opname</h4></center>',
+       '<style>',
+       'table, th, td {',
+       'border: 1px solid black;',
+       'border-collapse: collapse;',
+       '}',
+       'th, td {',
+       'padding: 5px;',
+       'text-align: left;',
+       '}',
+       '</style>',
+       '<table style="width:100%">',
+       '<tr>',
+       '<th>ID</th>',
+       '<th>Nama Barang</th>',
+       '<th>Nama Sales</th>',
+       '<th>Total Masuk</th>',
+       '<th>Total Diterima</th>',
+       '<th>Total Bayar</th>',
+       '<th>Hutang</th>',
+       '<th>Status Transaksi</th>',
+       '<th>Detil Transaksi</th>',
+       '<th>Tanggal Transaksi</th>',
+       '</tr>',
+       implode("",$itemset),
+       '</table>'
+     ];
+     $template = implode("",$itembuild);
+     $this->load->library("pdfgenerator");
+     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap");
+     // $this->response($d);
+   }
+   public function laporanpenjualan_post()
+   {
+     $dpost = $this->input->post(null,true);
+     $this->load->model("proses/m_laporan");
+     $d = $this->m_laporan->getlaporanbarangkeluar($dpost["start"],$dpost["end"]);
+     $jual = 0;
+     $modal = 0;
+     $untung = 0;
+     $data = [];
+     foreach ($d as $key => $value) {
+       $jual = $jual + ($value->total_keluar * $value->harga_jual);
+       $modal = $modal + ($value->total_keluar * $value->harga_modal);
+       $untung =  $untung + (($value->total_keluar * $value->harga_jual) - ($value->total_keluar * $value->harga_modal));
+       $data[] = (object) ["nofaktur"=>$value->nofaktur,"alamat"=>$value->alamat,"total_bayar"=>$value->total_bayar,"keuntungan"=>($jual - $modal),"nama_pembeli"=>$value->nama_pembeli,"nama_barang"=>$value->nama_barang,"harga_modal"=>$value->harga_modal,"harga_jual"=>$value->harga_jual,"total_keluar"=>$value->total_keluar,"tgl_transaksi_keluar"=>$value->tgl_transaksi_keluar];
+     }
+     $a = [];
+     $a["data"] = $data;
+     $a["jual"] = $jual;
+     $a["modal"] = $modal;
+     $a["untung"] = $untung;
+     $itemset = [];
+     $faktur = 0;
+     foreach ($a["data"] as $key => $value) {
+       if ($faktur == 0) {
+         $faktur = $value->nofaktur;
+       }
+       $no = "" ;
+       $alamat = "" ;
+       $nama = "" ;
+       $totalby = "" ;
+       $tgl = "";
+       $alamat = $value->alamat ;
+       $nama = $value->nama_pembeli ;
+       $no = $value->nofaktur;
+       $totalby = number_format($value->total_bayar);
+       $tgl = $value->tgl_transaksi_keluar;
+
+       $tem = [
+         "<tr>",
+         "<td>".$no."</td>",
+         "<td>".$nama."</td>",
+         "<td>".$alamat."</td>",
+         "<td>".$totalby."</td>",
+         "<td>".$value->nama_barang."</td>",
+         "<td>".$value->total_keluar."</td>",
+         "<td>Rp.".number_format($value->harga_modal)."</td>",
+         "<td>Rp.".number_format($value->harga_jual)."</td>",
+         "<td>Rp.".number_format($value->keuntungan)."</td>",
+         "<td>".$tgl."</td>",
+         "</tr>"
+       ];
+       $itemset[] = implode("",$tem);
+       $faktur = $value->nofaktur;
+     }
+     $itembuild = [
+       '<center><h4>Laporan Penjualan</h4></center>',
+       '<style>',
+       'table, th, td {',
+       'border: 1px solid black;',
+       'border-collapse: collapse;',
+       '}',
+       'th, td {',
+       'padding: 5px;',
+       'text-align: left;',
+       '}',
+       '</style>',
+       '<table style="width:100%">',
+       '<tr>',
+       '<th>No Faktur</th>',
+       '<th>Nama Pembeli</th>',
+       '<th>Alamat</th>',
+       '<th>Total Bayar</th>',
+       '<th>Nama Barang</th>',
+       '<th>Qty</th>',
+       '<th>Harga Modal</th>',
+       '<th>Harga Jual</th>',
+       '<th>Keuntungan</th>',
+       '<th>Tanggal Transaksi</th>',
+       '</tr>',
+       implode("",$itemset),
+       '<tr>',
+       '<th colspan="6">Total Keuntungan</th>',
+       '<th colspan="4">Rp. '.number_format($a["untung"]).'</th>',
+       '</tr>',
+       '<tr>',
+       '<th colspan="6">Total Jual</th>',
+       '<th colspan="4">Rp. '.number_format($a["jual"]).'</th>',
+       '</tr>',
+       '<th colspan="6">Total Modal</th>',
+       '<th colspan="4">Rp. '.number_format($a["modal"]).'</th>',
+       '</tr>',
+       '</table>'
+     ];
+     $template = implode("",$itembuild);
+     $this->load->library("pdfgenerator");
+     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap");
+   }
 }
