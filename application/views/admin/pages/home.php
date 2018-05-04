@@ -35,7 +35,7 @@
         <span class="info-box-icon bg-green"><i class="fa fa-money"></i></span>
 
         <div class="info-box-content">
-          <span class="info-box-text">Pendapatan Hari Ini</span>
+          <span class="info-box-text">Pemasukan <br> Hari Ini</span>
           <span class="info-box-number">{phi_cunt}</span>
         </div>
         <!-- /.info-box-content -->
