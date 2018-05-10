@@ -23,10 +23,57 @@ $(document).ready(function() {
                 '<div class="col-md-12">',
                 '<button class="btn btn-success btn-block bayar">Bayar Hutang</button>',
                 '</div>',
+                '<div class="col-md-12">',
+                '<button class="btn btn-success btn-block terima">Penerimaan Barang</button>',
+                '</div>',
                 '</div>'
               ];
               dialog.find(".modal-title").html("Pilih Opsi");
               dialog.find(".bootbox-body").html(build.join(""));
+              dialog.find(".terima").on('click',function(event) {
+                event.preventDefault();
+                input =  [
+                  {
+                    label:"Total",
+                    type:"number",
+                    step:"0.1",
+                    name:"total",
+                    id:"total"
+                  },{
+                    label:"",
+                    type:"hidden",
+                    name:"id_transaksi_barang_masuk",
+                    value:id
+                  }
+                ];
+                button = {type:"submit",name:"Konfirmasi",class:"warning"};
+                a = builder(input,button,"update");
+                dialog.find(".modal-title").html("Penerimaan Barang");
+                dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+a+"</div></div>");
+                dialog.find("#update").on('submit', function(event) {
+                  event.preventDefault();
+                  dform = $(this).serializeArray();
+                  nowmasuk = parseFloat(data[8]);
+                  console.log("Sekarang "+nowmasuk);
+                  tonow = nowmasuk + parseFloat(dialog.find("#total").val());
+                  console.log(tonow);
+                  if (tonow <= data[7]) {
+                    if (tonow == data[7]) {
+                      post(base_url+"api/stokopnameupdate",{status_penerimaan:"selesai",id_transaksi_barang_masuk:id});
+                    }
+                    ins = post(base_url+"api/stokopnameterimabarangsave",dform);
+                    if (ins.status == 1) {
+                      bootbox.hideAll();
+                      table_main.ajax.reload();
+                      swal("Sukses","Data Tersimpan","success");
+                    }else {
+                      swal("Error","Data Gagal Di Simpan","error");
+                    }
+                  }else {
+                    swal("Total Terima Terlalu Banyak");
+                  }
+                });
+              });
               dialog.find(".bayar").on('click',function(event) {
                 event.preventDefault();
                 input =  [
@@ -92,6 +139,9 @@ $(document).ready(function() {
               var build = [
                 '<div class="row">',
                 '<div class="col-md-12">',
+                '<button class="btn btn-success btn-block bayar">Bayar Hutang</button>',
+                '</div>',
+                '<div class="col-md-12">',
                 '<button class="btn btn-success btn-block terima">Penerimaan Barang</button>',
                 '</div>',
                 '</div>'
@@ -139,6 +189,59 @@ $(document).ready(function() {
                     }
                   }else {
                     swal("Total Terima Terlalu Banyak");
+                  }
+                });
+              });
+              dialog.find(".bayar").on('click',function(event) {
+                event.preventDefault();
+                input =  [
+                  {
+                    label:"Total Bayar",
+                    type:"number",
+                    step:"0.1",
+                    name:"bayar",
+                    id:"dibayar"
+                  },{
+                    label:"",
+                    type:"hidden",
+                    name:"id_transaksi_barang_masuk",
+                    value:id
+                  }
+                ];
+                button = {type:"submit",name:"Bayarkan",class:"warning"};
+                a = builder(input,button,"update");
+                dialog.find(".modal-title").html("Pembayaran");
+                dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+a+"</div></div>");
+                dialog.find("#update").on('submit', function(event) {
+                  event.preventDefault();
+                  var cur = get(base_url+"api/stokopnamehutangheap/"+id);
+                  totaldibayar = parseFloat(cur.bayar);
+                  dibayar = parseFloat(dialog.find("#dibayar").val());
+                  hutang = parseFloat(cek.data[0].hutang);
+                  sumdibayar = parseFloat(cek.data[0].total_bayar)+dibayar;
+                  f = totaldibayar + dibayar;
+                  nowhutang = (hutang - dibayar);
+                  // Sampai Sini
+                  if (dibayar <= hutang) {
+                    if (dibayar == hutang) {
+                      dpo = {id_transaksi_barang_masuk:id,total_bayar:sumdibayar,hutang:nowhutang,status_transaksi:"lunas"};
+                    }else {
+                      dpo = {id_transaksi_barang_masuk:id,total_bayar:sumdibayar,hutang:nowhutang}
+                    }
+                    console.log("Total Di Bayar "+totaldibayar);
+                    dform = $(this).serializeArray();
+                    dform[dform.length] = {name:"bayar",value:dibayar};
+                    post(base_url+"api/stokopnameupdate",dpo);
+                    up = post(base_url+"api/stokopnamehutangsave",dform);
+                    if (up.status == 1) {
+                      bootbox.hideAll();
+                      table_main.ajax.reload();
+                      swal("Sukses","Data Tersimpan","success");
+                    }else {
+                      swal("Error","Gagal Simpan Data","error");
+                    }
+                  }else {
+                    swal("Error","Jumlah Pembayaran Terlalu Besar","error");
                   }
                 });
               });
