@@ -21,7 +21,11 @@ class Transaksi extends CI_Controller{
     // If TRUE that APPENDING if False that REPLACE ALL STYLESHEET
     // Set JS as Array
     // If TRUE that APPENDING if False that REPLACE ALL JS
+    $this->template->setcss([
+      base_url("assets/extra/selectize/css/selectize.bootstrap3.css")
+    ],true);
     $this->template->setjs([
+      base_url("assets/extra/selectize/js/standalone/selectize.js"),
       base_url("assets/main/transaksi.js")
     ],true);
     // Builder as Array

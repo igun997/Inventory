@@ -73,6 +73,10 @@ $(document).ready(function() {
             html2 = builder(input,button,"savetrx");
             dialog.find(".modal-title").html("Edit Transaksi ID "+idtrx);
             dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+html+"</div><div class='col-md-12'><label>Order</label>"+table1+"</div><div class='col-md-12'><label>Pre Order</label>"+table2+"</div><div class='col-md-12'>"+html2+"</div></div>");
+            console.log("Remove Tab Index");
+            dialog.find(".bootbox").removeAttr('tabindex');
+            var $select = dialog.find("#barang").selectize();
+            var selectize = $select[0].selectize;
             var table_main_sub = dialog.find("#table_bk").DataTable({
               ajax: base_url + "api/barangkeluarget/"+idtrx
             });
@@ -85,10 +89,12 @@ $(document).ready(function() {
               sd = get(base_url+"api/barangget/-1/1");
               if (sd.status == 1) {
                 sd_data = sd.data;
-                dialog.find("#barang").html("");
-                dialog.find("#barang").append($('<option>', {value:"", text:""}));
+                selectize.clearOptions();
+                selectize.addOption({value:"", text:""});
+                selectize.addItem("");
                 for (var i = 0; i < sd_data.length; i++) {
-                  dialog.find("#barang").append($('<option>', {value:sd_data[i].id_barang, text:sd_data[i].nama_barang+" - Stok = "+sd_data[i].stok}));
+                  selectize.addOption({value:sd_data[i].id_barang, text:sd_data[i].nama_barang+" - Stok = "+sd_data[i].stok});
+                  selectize.addItem(sd_data[i].id_barang);
                 }
               }else {
                 bootbox.hideAll();
@@ -99,9 +105,12 @@ $(document).ready(function() {
               sd = get(base_url+"api/barangget/-1/1");
               if (sd.status == 1) {
                 sd_data = sd.data;
-                dialog.find("#barang").append($('<option>', {value:"", text:""}));
+                selectize.clearOptions();
+                selectize.addOption({value:"", text:""});
+                selectize.addItem("");
                 for (var i = 0; i < sd_data.length; i++) {
-                  dialog.find("#barang").append($('<option>', {value:sd_data[i].id_barang, text:sd_data[i].nama_barang+" - Stok = "+sd_data[i].stok}));
+                  selectize.addOption({value:sd_data[i].id_barang, text:sd_data[i].nama_barang+" - Stok = "+sd_data[i].stok});
+                  selectize.addItem(sd_data[i].id_barang);
                 }
               }else {
                 bootbox.hideAll();
@@ -503,6 +512,7 @@ $(document).ready(function() {
                 });
               }
             });
+
           }else if (cek.status == 1 && cek.data.status_transaksi == "lunas") {
             bootbox.hideAll();
             swal("Sukses","Transaksi Sudah Selesai","info");
