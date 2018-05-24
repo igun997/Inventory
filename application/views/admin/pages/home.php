@@ -65,7 +65,27 @@
           <h1 class="box-title">{block_title}</h1>
         </div>
         <div class="box-body">
+          <div class="table-responsive">
+            <table class="table" id="main_table">
+              <thead>
+                <tr>
+                  <th colspan="4"><center>Informasi Faktur</center></th>
+                  <th colspan="2"><center>Keuntungan</center></th>
+                </tr>
+                <tr>
+                  <th>No Faktur</th>
+                  <th>Status Transaksi</th>
+                  <th>Total Pembayaran</th>
+                  <th>Tanggal Transaksi</th>
+                  <th>Bersih</th>
+                  <th>Kotor</th>
+                </tr>
+              </thead>
+              <tbody>
 
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

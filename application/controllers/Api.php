@@ -75,7 +75,11 @@ class Api extends REST_Controller
          }
          $this->response($build);
        }else {
-         $this->response(["status"=>1,"data"=>$data]);
+         if ($in == 2) {
+           $this->response($data);
+         }else {
+           $this->response(["status"=>1,"data"=>$data]);
+         }
        }
      }else {
        $data = $this->main->get(["id_kategori_barang"=>$id]);
@@ -126,7 +130,14 @@ class Api extends REST_Controller
            $b["data"][] = [$value->id_barang,$value->nama_barang,$value->stok." ".$value->satuan_kategori,$value->stok_minimum,number_format($value->harga_modal),number_format($value->harga_jual),$value->nama_kategori,"<button class='btn btn-warning edit' data-id='".$value->id_barang."' type='button'><li class='fa fa-edit'></li></button>"];
          }
        }else {
-         $b = ["status"=>1,"data"=>$res];
+         if ($in == 2) {
+           foreach ($res as $k => &$v) {
+             $v->nama_barang = $v->nama_barang." | ".$v->stok;
+           }
+           $b = $res;
+         }else {
+           $b = ["status"=>1,"data"=>$res];
+         }
        }
        $this->response($b);
      }else {
@@ -134,7 +145,11 @@ class Api extends REST_Controller
        $res = $d->result();
        if (count($res) > 0) {
          $res = $res[0];
-         $this->response(["status"=>1,"data"=>$res]);
+         if ($in == 2) {
+           $this->response($res);
+         }else {
+           $this->response(["status"=>1,"data"=>$res]);
+         }
        }else {
          $this->response(["status"=>0]);
        }
@@ -360,6 +375,30 @@ class Api extends REST_Controller
      }else {
        $this->response(["status"=>0]);
      }
+   }
+   public function dashboardreport_get()
+   {
+     $this->main->setTable("transaksi_barang_keluar");
+     $data = $this->main->get();
+     $mdata = [];
+     $bk = function($id){
+       $this->main->setTable("barang_keluar");
+       $d = $this->main->get(["id_transaksi_barang_keluar"=>$id]);
+       $res = [];
+       $kotor = 0;
+       $bersih = 0;
+       foreach ($d->result() as $key => $value) {
+         $kotor = $kotor + ($value->harga_jual*$value->total_keluar);
+         $bersih = $bersih + (($value->harga_jual*$value->total_keluar)-($value->harga_modal*$value->total_keluar));
+       }
+       return ["kotor"=>$kotor,"bersih"=>$bersih];
+     };
+     $mdata["data"] = [];
+     foreach ($data->result() as $key => $value) {
+       $duntung = $bk($value->id_transaksi_barang_keluar);
+       $mdata["data"][] = [$value->nofaktur,ucfirst($value->status_transaksi),$value->total_bayar,$value->tgl_transaksi_keluar,$duntung["bersih"],$duntung["kotor"]];
+     }
+     $this->response($mdata);
    }
    public function transaksiget_get($id = '',$in = 0)
    {
