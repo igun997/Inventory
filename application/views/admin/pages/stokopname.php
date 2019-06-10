@@ -12,7 +12,7 @@
         <table class="table" id="table_main">
           <thead>
             <th>ID</th>
-            <th>Nama Sales</th>
+            <th>Nama Suplier</th>
             <th>Nama Barang</th>
             <th>Status Transaksi</th>
             <th>Status Penerimaan</th>

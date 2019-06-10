@@ -6,9 +6,9 @@ class Transaksi extends CI_Controller{
   public function __construct()
   {
     parent::__construct();
-    // if($this->session->userlogin != "admin"){
-    //   redirect("admin/login");
-    // }
+    if($this->session->hak_akses == null){
+      redirect("admin/login");
+    }
   }
 
   function index()

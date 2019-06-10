@@ -266,10 +266,10 @@ $(document).ready(function() {
           var build = [
             '<div class="row">',
             '<div class="col-md-12">',
-            '<button class="btn btn-success btn-block tambah">Tambah Sales</button>',
+            '<button class="btn btn-success btn-block tambah">Tambah Suplier</button>',
             '</div>',
             '<div class="col-md-12">',
-            '<button class="btn btn-success btn-block list">List Sales</button>',
+            '<button class="btn btn-success btn-block list">List Suplier</button>',
             '</div>',
             '<div class="col-md-12">',
             '<button class="btn btn-primary btn-block cek">Cek Stok Opname</button>',
@@ -280,8 +280,8 @@ $(document).ready(function() {
           dialog.find(".bootbox-body").html(build.join(""));
           dialog.find(".list").on('click', function(event) {
             event.preventDefault();
-            html = table(["ID","Nama Sales","Nama Perusahaan","Alamat"],[],"tbl_sales");
-            dialog.find(".modal-title").html("List Sales");
+            html = table(["ID","Nama Suplier","Nama Perusahaan","Alamat"],[],"tbl_sales");
+            dialog.find(".modal-title").html("List Suplier");
             dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+html+"</div></div>");
             tbl_sales = dialog.find("#tbl_sales").DataTable({
               ajax: base_url + "api/salesget"
@@ -291,7 +291,7 @@ $(document).ready(function() {
               data = tbl_sales.row(this).data();
               input = [
                 {
-                  label:"Nama Sales",
+                  label:"Nama Suplier",
                   type:"text",
                   name:"nama_sales",
                   value:data[1]
@@ -315,7 +315,7 @@ $(document).ready(function() {
               button = {type:"submit",name:"Update",class:"warning"};
               buttondel = {type:"button",name:"Delete",class:"danger",id:"del",data:data[0]};
               html = builder(input,button,"update",buttondel);
-              dialog.find(".modal-title").html("Edit Sales");
+              dialog.find(".modal-title").html("Edit Suplier");
               dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+html+"</div></div>");
               dialog.find("#del").on('click', function(event) {
                 event.preventDefault();
@@ -354,7 +354,7 @@ $(document).ready(function() {
             event.preventDefault();
             input = [
               {
-                label:"Nama Sales",
+                label:"Nama Suplier",
                 type:"text",
                 name:"nama_sales"
               },{
@@ -369,7 +369,7 @@ $(document).ready(function() {
             ];
             button = {type:"submit",name:"Simpan",class:"success"};
             html = builder(input,button,"save");
-            dialog.find(".modal-title").html("Tambah Sales");
+            dialog.find(".modal-title").html("Tambah Suplier");
             dialog.find(".bootbox-body").html("<div class='row'><div class='col-md-12'>"+html+"</div></div>");
             dialog.find("#save").on('submit', function(event) {
               event.preventDefault();
@@ -416,7 +416,7 @@ $(document).ready(function() {
                       value:dcstok[0],
                       name:"id_barang"
                     },{
-                      label:"Sales",
+                      label:"Suplier",
                       type:"select2",
                       name:"id_sales",
                       id:"siselect"
@@ -466,7 +466,7 @@ $(document).ready(function() {
                       }
                     }else {
                       bootbox.hideAll();
-                      swal("Error","Maaf Anda Belum Mengisi Daftar Sales","error");
+                      swal("Error","Maaf Anda Belum Mengisi Daftar Suplier","error");
                     }
                   });
                   dialog.find("#save").on('submit', function(event) {

@@ -569,7 +569,7 @@ class Api extends REST_Controller
        }
        $build = [
          '<center><h1>Faktur Pembelian</h1></center>',
-         '<center><h3>TB Kagum Lestari</h3></center>',
+         '<center><h3>CV Setiaji</h3></center>',
          '<style>',
          'table, th, td {',
              'border: 1px solid black;',
@@ -698,7 +698,7 @@ class Api extends REST_Controller
        }
        $build = [
          '<center><h1>Faktur Pembelian</h1></center>',
-         '<center><h3>TB Kagum Lestari</h3></center>',
+         '<center><h3>CV Setiaji</h3></center>',
          '<style>',
          'table, th, td {',
              'border: 1px solid black;',
@@ -1062,7 +1062,7 @@ class Api extends REST_Controller
      ];
      $template = implode("",$itembuild);
      $this->load->library("pdfgenerator");
-     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
+     $this->pdfgenerator->generate("<center><h1>CV Setiaji</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
    }
    public function laporankasmasuk_post()
    {
@@ -1118,7 +1118,7 @@ class Api extends REST_Controller
      ];
      $template = implode("",$itembuild);
      $this->load->library("pdfgenerator");
-     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
+     $this->pdfgenerator->generate("<center><h1>CV Setiaji</h1><h3>Periode  ".$dpost["start"]." - ".$dpost["end"]."  </h3></center>".$template,"lap_akuntan");
      // $this->response($build);
    }
    public function laporanopname_post()
@@ -1184,7 +1184,7 @@ class Api extends REST_Controller
      ];
      $template = implode("",$itembuild);
      $this->load->library("pdfgenerator");
-     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap");
+     $this->pdfgenerator->generate("<center><h1>CV Setiaji</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap");
      // $this->response($d);
    }
    public function laporanpenjualan_post()
@@ -1282,6 +1282,6 @@ class Api extends REST_Controller
      ];
      $template = implode("",$itembuild);
      $this->load->library("pdfgenerator");
-     $this->pdfgenerator->generate("<center><h1>CV Kagum Lestari</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap");
+     $this->pdfgenerator->generate("<center><h1>CV Setiaji</h1><h3>Periode ".$dpost["start"]." - ".$dpost["end"]."</h3></center>".$template,"lap",true,"A4","landscape");
    }
 }

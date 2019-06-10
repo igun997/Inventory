@@ -21,6 +21,8 @@ class Template {
   {
     $this->ci =& get_instance();
     $this->ci->load->helper('url');
+    $this->ci->load->helper('directory');
+    $this->ci->load->helper('file');
     $this->ci->load->library('parser');
   }
   /**
@@ -46,61 +48,41 @@ class Template {
 
   public function defaultStyle($type='')
   {
-    if($type == "admin"){
-      $css = [
-        base_url("assets/adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css"),
-        base_url("assets/adminlte/bower_components/font-awesome/css/font-awesome.min.css"),
-        base_url("assets/adminlte/bower_components/Ionicons/css/ionicons.min.css"),
-        base_url("assets/adminlte/dist/css/AdminLTE.min.css"),
-        base_url("assets/adminlte/dist/css/skins/_all-skins.min.css"),
-        base_url("assets/adminlte/bower_components/morris.js/morris.css"),
-        base_url("assets/adminlte/bower_components/jvectormap/jquery-jvectormap.css"),
-        base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"),
-        base_url("assets/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css"),
-        base_url("assets/extra/swal.css"),
-        base_url("assets/extra/datatables/datatables.min.css"),
-        base_url("assets/extra/select2/css/select2.min.css"),
-        base_url("assets/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css")
-      ];
-      $js = [
-        base_url("assets/adminlte/bower_components/jquery/dist/jquery.min.js"),
-        base_url("assets/adminlte/bower_components/jquery-ui/jquery-ui.min.js"),
-        base_url("assets/adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"),
-        base_url("assets/adminlte/bower_components/raphael/raphael.min.js"),
-        base_url("assets/adminlte/bower_components/morris.js/morris.min.js"),
-        base_url("assets/adminlte/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"),
-        base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"),
-        base_url("assets/extra/swal.js"),
-        base_url("assets/extra/datatables/datatables.min.js"),
-        base_url("assets/extra/datatables/sum.js"),
-        base_url("assets/extra/select2/js/select2.full.js"),
-        base_url("assets/extra/bootbox.min.js"),
-        base_url("assets/adminlte/dist/js/adminlte.min.js")
-      ];
-      $this->css = $css;
-      $this->js = $js;
-    }elseif ($type == "user") {
-      $css = [
-        ''
-      ];
-      $js = [
-        ''
-      ];
-      $this->css = $css;
-      $this->js = $js;
-    }elseif ($type == "public") {
-      $css = [
-        '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'
-      ];
-      $js = [
-        '//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'
-      ];
-      $this->css = $css;
-      $this->js = $js;
-    }else{
+    $baseassets = FCPATH."core";
+    $base = directory_map($baseassets);
+    if (!file_exists($baseassets."/assets/".$type)) {
       exit("Default Style Wrong");
       die();
     }
+    $readfile = read_file($baseassets."/assets/".$type);
+    $readfile = explode("[CSS]",$readfile);
+    $readfile = explode("[JS]",$readfile[1]);
+    $css = explode("\r\n",$readfile[0]);
+    $js = explode("\r\n",$readfile[1]);
+    foreach ($js as $key => &$value) {
+      if ($value == "") {
+        unset($js[$key]);
+      }
+    }
+    foreach ($css as $key => &$value) {
+      if ($value == "") {
+        unset($css[$key]);
+      }
+    }
+    foreach ($css as $key => &$value) {
+      $baseexp = explode("-|",$value);
+      if (count($baseexp) > 1) {
+        $value = base_url($baseexp[1]);
+      }
+    }
+    foreach ($js as $key => &$value) {
+      $baseexp = explode("-|",$value);
+      if (count($baseexp) > 1) {
+        $value = base_url($baseexp[1]);
+      }
+    }
+    $this->css = $css;
+    $this->js = $js;
   }
   /**
  	 * Set CSS untuk menambah kan CSS baru atau mengganti default CSS yang sudah di load sebelumnya dengan option setcss(DATA_ARRAY_URL,REPLACE OR APPEND)

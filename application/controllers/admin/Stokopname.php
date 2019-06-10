@@ -7,9 +7,9 @@ class Stokopname extends CI_Controller{
   {
     parent::__construct();
     $this->load->model("crud/main");
-    // if($this->session->userlogin != "admin"){
-    //   redirect("admin/login");
-    // }
+    if($this->session->hak_akses == null){
+      redirect("admin/login");
+    }
   }
 
   function index()

@@ -53,8 +53,6 @@ $(document).ready(function() {
   				}
   			}
   		};
-  		var ctx = document.getElementById('chart_laporan').getContext('2d');
-  		window.myLine = new Chart(ctx, config);
     }
     // laporan Barang Keluar
     input = [

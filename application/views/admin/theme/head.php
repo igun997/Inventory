@@ -27,7 +27,7 @@
 <div class="wrapper">
 <header class="main-header">
   <!-- Logo -->
-  <a href="index2.html" class="logo">
+  <a href="<?= base_url() ?>" class="logo">
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini"></span>
     <!-- logo for regular state and mobile devices -->
@@ -67,40 +67,44 @@
           <span>HOME</span>
         </a>
       </li>
-      <li class="treeview">
-        <a href="#">
-          <i class="fa fa-pie-chart"></i>
-          <span>MASTER DATA</span>
-          <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li><a href="<?= $base_admin("barang") ?>"><i class="fa fa-circle-o"></i> Barang</a></li>
-          <li><a href="<?= $base_admin("kategoribarang") ?>"><i class="fa fa-circle-o"></i> Kategori Barang</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="<?= $base_admin("transaksi") ?>">
-          <i class="fa fa-arrow-up"></i> <span>Pengeluaran Barang</span>
-          <span class="pull-right-container">
-          </span>
-        </a>
-      </li>
-      <li>
+      <?php if($this->session->hak_akses == "admin"): ?>
+        <li>
+          <a href="<?= $base_admin("transaksi") ?>">
+            <i class="fa fa-arrow-up"></i> <span>Pengeluaran Barang</span>
+            <span class="pull-right-container">
+            </span>
+          </a>
+        </li>
+      <?php endif; ?>
+      <?php if($this->session->hak_akses == "gudang"): ?>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-pie-chart"></i>
+            <span>MASTER DATA</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="<?= $base_admin("barang") ?>"><i class="fa fa-circle-o"></i> Barang</a></li>
+            <li><a href="<?= $base_admin("kategoribarang") ?>"><i class="fa fa-circle-o"></i> Kategori Barang</a></li>
+          </ul>
+        </li>
+        <li>
         <a href="<?= $base_admin("stokopname") ?>">
-          <i class="fa fa-adjust"></i> <span>Stok Opname</span>
+          <i class="fa fa-adjust"></i> <span>Purchase Order</span>
           <span class="pull-right-container">
           </span>
         </a>
       </li>
-      <li>
+    <?php endif; ?>
+      <!-- <li>
         <a href="<?= $base_admin("akuntan") ?>">
           <i class="fa fa-money"></i> <span>Akuntan</span>
           <span class="pull-right-container">
           </span>
         </a>
-      </li>
+      </li> -->
       <li>
         <a href="<?= $base_admin("laporan") ?>">
           <i class="fa fa-list"></i> <span>Laporan</span>
