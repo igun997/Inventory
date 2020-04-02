@@ -286,7 +286,7 @@ class Category_model extends CI_Model{
 
 		if ($not) {
 
-			$this->db->where('category.parent_id', "!=",$id);
+			$this->db->where('category.parent_id is NOT NULL', null,false);
 
 		}else {
 

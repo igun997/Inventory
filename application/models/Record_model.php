@@ -16,12 +16,12 @@ class Record_Object{
 
 	public function __construct($object){
 
-		$this->id = empty($object->id) ? NULL : $object->id;
-		$this->total = floatval($this->total);
-		$this->unit_id = $this->unit_id;
-		$this->category_id = $this->category_id;
-		$this->input_created = intval($object->input_created);
-		$this->data_created = intval($object->data_created);
+		$this->id = empty($object->id) ? NULL : intval($object->id);
+		$this->total =  floatval($object->total);
+		$this->unit_id =  intval($object->unit_id);
+		$this->category_id =  intval($object->category_id);
+		$this->input_created =  intval($object->input_created);
+		$this->data_created =  intval($object->data_created);
 
 		$this->ci = Indra_Helper::getCIInstance();
 	}
@@ -31,9 +31,9 @@ class Record_Object{
 
 		$this->ci->load->model("unit_model","unit_model");
 
-		$this->unit_model->withId($this->unit_id);
+		$this->ci->unit_model->withId($this->unit_id);
 
-		return $this->unit_model->findOne();
+		return $this->ci->unit_model->findOne();
 
 	}
 
@@ -42,9 +42,9 @@ class Record_Object{
 
 		$this->ci->load->model("category_model","category_model");
 
-		$this->category_model->withId($this->category_id);
+		$this->ci->category_model->withId($this->category_id);
 
-		return $this->category_model->findOne();
+		return $this->ci->category_model->findOne();
 
 	}
 }
