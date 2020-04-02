@@ -1,16 +1,28 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Kategoribarang extends CI_Controller{
+/**
+ * @author Indra Gunanda
+ */
+class Unit extends CI_Controller{
+  /**
+ 	 * Konstruktor
+ 	 *
+ 	 * @return void
+	 */
 
   public function __construct()
   {
     parent::__construct();
     $this->load->model("crud/main");
-    if($this->session->hak_akses == null){
-      redirect("admin/login");
-    }
+    // if($this->session->hak_akses == null){
+    //   redirect("admin/login");
+    // }
   }
+  /**
+ 	 * Index Home
+ 	 *
+ 	 * @return void
+	 */
 
   function index()
   {
@@ -23,15 +35,14 @@ class Kategoribarang extends CI_Controller{
     // Set JS as Array
     // If TRUE that APPENDING if False that REPLACE ALL JS
     $this->template->setjs([
-      base_url("assets/main/kategoribarang.js")
+      base_url("assets/main/unit.js")
     ],true);
-    // Builder as Array
 
     $build = [
-      "block_title"=>"Kategori Barang"
+      "block_title"=>"Unit",
     ];
     // Render
-    $this->template->renderHTML(['head','kategoribarang','foot'],['title'=>"Master - Kategori Barang",'other'=>$build]);
+    $this->template->renderHTML(['head','unit','foot'],['title'=>"Unit",'other'=>$build]);
   }
 
 }

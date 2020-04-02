@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * @author Indra Gunanda
  */
-class Laporan extends CI_Controller{
+class Record extends CI_Controller{
   /**
  	 * Konstruktor
  	 *
@@ -14,9 +14,9 @@ class Laporan extends CI_Controller{
   {
     parent::__construct();
     $this->load->model("crud/main");
-    if($this->session->hak_akses == null){
-      redirect("admin/login");
-    }
+    // if($this->session->hak_akses == null){
+    //   redirect("admin/login");
+    // }
   }
   /**
  	 * Index Home
@@ -34,21 +34,15 @@ class Laporan extends CI_Controller{
     // If TRUE that APPENDING if False that REPLACE ALL STYLESHEET
     // Set JS as Array
     // If TRUE that APPENDING if False that REPLACE ALL JS
-    $this->template->setcss([
-      base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/bootstrap-datepicker.min.css")
-    ],true);
     $this->template->setjs([
-      base_url("assets/adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"),
-      base_url("assets/extra/Chart.bundle.js"),
-      base_url("assets/main/laporan.js")
+      base_url("assets/main/record.js")
     ],true);
-    // Builder as Array
 
     $build = [
-      "block_title"=>"Grafik Laporan"
+      "block_title"=>"Record",
     ];
     // Render
-    $this->template->renderHTML(['head','laporan','foot'],['title'=>"Laporan",'other'=>$build]);
+    $this->template->renderHTML(['head','record','foot'],['title'=>"Record",'other'=>$build]);
   }
 
 }

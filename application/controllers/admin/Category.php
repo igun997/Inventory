@@ -1,15 +1,28 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Transaksi extends CI_Controller{
+/**
+ * @author Indra Gunanda
+ */
+class Category extends CI_Controller{
+  /**
+ 	 * Konstruktor
+ 	 *
+ 	 * @return void
+	 */
 
   public function __construct()
   {
     parent::__construct();
-    if($this->session->hak_akses == null){
-      redirect("admin/login");
-    }
+    $this->load->model("crud/main");
+    // if($this->session->hak_akses == null){
+    //   redirect("admin/login");
+    // }
   }
+  /**
+ 	 * Index Home
+ 	 *
+ 	 * @return void
+	 */
 
   function index()
   {
@@ -21,19 +34,15 @@ class Transaksi extends CI_Controller{
     // If TRUE that APPENDING if False that REPLACE ALL STYLESHEET
     // Set JS as Array
     // If TRUE that APPENDING if False that REPLACE ALL JS
-    $this->template->setcss([
-      base_url("assets/extra/selectize/css/selectize.bootstrap3.css")
-    ],true);
     $this->template->setjs([
-      base_url("assets/extra/selectize/js/standalone/selectize.js"),
-      base_url("assets/main/transaksi.js")
+      base_url("assets/main/category.js?t=".time())
     ],true);
-    // Builder as Array
 
     $build = [
-      "block_title"=>"Transaksi Barang Keluar"
+      "block_title"=>"Category",
     ];
     // Render
-    $this->template->renderHTML(['head','transaksi','foot'],['title'=>"Transaksi Barang Keluar",'other'=>$build]);
+    $this->template->renderHTML(['head','category','foot'],['title'=>"Category",'other'=>$build]);
   }
+
 }

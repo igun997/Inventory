@@ -67,56 +67,24 @@
           <span>HOME</span>
         </a>
       </li>
-      <?php if($this->session->hak_akses == "admin"): ?>
-        <li>
-          <a href="<?= $base_admin("transaksi") ?>">
-            <i class="fa fa-arrow-up"></i> <span>Pengeluaran Barang</span>
-            <span class="pull-right-container">
-            </span>
-          </a>
-        </li>
-      <?php endif; ?>
-      <?php if($this->session->hak_akses == "gudang"): ?>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>MASTER DATA</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="<?= $base_admin("barang") ?>"><i class="fa fa-circle-o"></i> Barang</a></li>
-            <li><a href="<?= $base_admin("kategoribarang") ?>"><i class="fa fa-circle-o"></i> Kategori Barang</a></li>
-          </ul>
-        </li>
-        <li>
-        <a href="<?= $base_admin("stokopname") ?>">
-          <i class="fa fa-adjust"></i> <span>Purchase Order</span>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-file"></i>
+          <span>MASTER DATA</span>
           <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
-      </li>
-    <?php endif; ?>
-      <!-- <li>
-        <a href="<?= $base_admin("akuntan") ?>">
-          <i class="fa fa-money"></i> <span>Akuntan</span>
-          <span class="pull-right-container">
-          </span>
-        </a>
-      </li> -->
-      <li>
-        <a href="<?= $base_admin("laporan") ?>">
-          <i class="fa fa-list"></i> <span>Laporan</span>
-          <span class="pull-right-container">
-          </span>
-        </a>
+        <ul class="treeview-menu">
+          <li><a href="<?= $base_admin("category") ?>"><i class="fa fa-circle-o"></i> Category</a></li>
+          <li><a href="<?= $base_admin("unit") ?>"><i class="fa fa-circle-o"></i> Unit</a></li>
+          <li><a href="<?= $base_admin("record") ?>"><i class="fa fa-circle-o"></i> Record</a></li>
+        </ul>
       </li>
       <li>
-        <a href="<?= $base_admin("logout") ?>">
-          <i class="fa fa-power-off"></i> <span>LOGOUT</span>
-          <span class="pull-right-container">
-          </span>
+        <a href="<?= $base_admin("report") ?>">
+          <i class="fa fa-file-o"></i>
+          <span>Report</span>
         </a>
       </li>
   </section>

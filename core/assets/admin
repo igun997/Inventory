@@ -12,6 +12,7 @@
 -|assets/extra/datatables/datatables.min.css
 -|assets/extra/select2/css/select2.min.css
 -|assets/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css
+//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css
 [JS]
 -|assets/adminlte/bower_components/jquery/dist/jquery.min.js
 -|assets/adminlte/bower_components/jquery-ui/jquery-ui.min.js
@@ -26,3 +27,4 @@
 -|assets/extra/select2/js/select2.full.js
 -|assets/extra/bootbox.min.js
 -|assets/adminlte/dist/js/adminlte.min.js
+//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js

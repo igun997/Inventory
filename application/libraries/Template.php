@@ -57,8 +57,8 @@ class Template {
     $readfile = read_file($baseassets."/assets/".$type);
     $readfile = explode("[CSS]",$readfile);
     $readfile = explode("[JS]",$readfile[1]);
-    $css = explode("\r\n",$readfile[0]);
-    $js = explode("\r\n",$readfile[1]);
+    $css = explode("\n",$readfile[0]);
+    $js = explode("\n",$readfile[1]);
     foreach ($js as $key => &$value) {
       if ($value == "") {
         unset($js[$key]);

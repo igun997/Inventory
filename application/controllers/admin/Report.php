@@ -1,16 +1,28 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Stokopname extends CI_Controller{
+/**
+ * @author Indra Gunanda
+ */
+class Report extends CI_Controller{
+  /**
+ 	 * Konstruktor
+ 	 *
+ 	 * @return void
+	 */
 
   public function __construct()
   {
     parent::__construct();
     $this->load->model("crud/main");
-    if($this->session->hak_akses == null){
-      redirect("admin/login");
-    }
+    // if($this->session->hak_akses == null){
+    //   redirect("admin/login");
+    // }
   }
+  /**
+ 	 * Index Home
+ 	 *
+ 	 * @return void
+	 */
 
   function index()
   {
@@ -23,15 +35,14 @@ class Stokopname extends CI_Controller{
     // Set JS as Array
     // If TRUE that APPENDING if False that REPLACE ALL JS
     $this->template->setjs([
-      base_url("assets/main/stokopname.js")
+      base_url("assets/main/report.js")
     ],true);
-    // Builder as Array
 
     $build = [
-      "block_title"=>"Stok Opname"
+      "block_title"=>"Report",
     ];
     // Render
-    $this->template->renderHTML(['head','stokopname','foot'],['title'=>"Stok Opname",'other'=>$build]);
+    $this->template->renderHTML(['head','report','foot'],['title'=>"Report",'other'=>$build]);
   }
 
 }
